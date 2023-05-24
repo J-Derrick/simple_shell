@@ -16,7 +16,7 @@ char *_strncpy(char *destination, const char *source, int num_chars)
 	for (; i < num_chars; i++)
 		destination[i] = '\0';
 
-	return destination;
+	return (destination);
 }
 
 /**
@@ -39,7 +39,7 @@ char *_strncat(char *destination, const char *source, int num_bytes)
 
 	destination[dest_length + i] = '\0';
 
-	return destination;
+	return (destination);
 }
 
 /**
@@ -54,10 +54,9 @@ char *_strchr(const char *str, int character)
 	while (*str != '\0')
 	{
 		if (*str == character)
-			return (char *)str;
+			return ((char *)str);
 		str++;
 	}
 
-	return NULL;
+	return (NULL);
 }
-
