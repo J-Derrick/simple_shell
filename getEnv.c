@@ -4,7 +4,7 @@
  * get_environ - returns the string array copy of our environ
  * @info: Structure containing potential arguments. Used to maintain
  *          constant function prototype.
- * Return: Always 0
+ * Return: The string array copy of our environ
  */
 char **get_environ(info_t *info)
 {
@@ -32,8 +32,7 @@ int _unsetenv(info_t *info, char *var)
 
 	if (!node || !var)
 		return (0);
-
-	while (node)
+	for (i = 0, node = info->env; node; node = node->next, i++)
 	{
 		p = starts_with(node->str, var);
 		if (p && *p == '=')
@@ -41,10 +40,7 @@ int _unsetenv(info_t *info, char *var)
 			info->env_changed = delete_node_at_index(&(info->env), i);
 			i = 0;
 			node = info->env;
-			continue;
 		}
-		node = node->next;
-		i++;
 	}
 	return (info->env_changed);
 }
@@ -61,6 +57,7 @@ int _unsetenv(info_t *info, char *var)
 int _setenv(info_t *info, char *var, char *value)
 {
 	char *buf = NULL;
+
 	list_t *node;
 	char *p;
 
