@@ -12,16 +12,15 @@ void _eputs(char *str)
 
 	if (!str)
 		return;
-
-	while (str[index] != '\0')
+	for (int i = 0; str[i] != '\0'; i++)
 	{
-		_eputchar(str[index]);
-		index++;
+		_eputchar(str[i]);
 	}
+
 }
 
 /**
- * _eputchar - writes the character c to stderr
+ * _eputchar - writes the character c to standard error
  * @c: The character to print
  *
  * Return: On success 1.
@@ -29,19 +28,22 @@ void _eputs(char *str)
  */
 int _eputchar(char c)
 {
-	static int index;
-	static char buffer[WRITE_BUF_SIZE];
-
-	if (c == BUF_FLUSH || index >= WRITE_BUF_SIZE)
-	{
-		write(2, buffer, index);
-		index = 0;
-	}
+	static char buf[WRITE_BUF_SIZE];
+	static int i;
 
 	if (c != BUF_FLUSH)
-		buffer[index++] = c;
-
-	return 1;
+	{
+		buf[i++] = c;
+		if (i >= WRITE_BUF_SIZE || c == BUF_FLUSH)
+		{
+			for (int j = 0; j < i; j++)
+			{
+				write(2, &buf[j], 1);
+			}
+			i = 0;
+		}
+	}
+	return (1);
 }
 
 /**
@@ -66,7 +68,7 @@ int _putfd(char c, int fd)
 	if (c != BUF_FLUSH)
 		buffer[index++] = c;
 
-	return 1;
+	return (1);
 }
 
 /**
@@ -81,12 +83,12 @@ int _putsfd(char *str, int fd)
 	int count = 0;
 
 	if (!str)
-		return 0;
+		return (0);
 
 	while (*str)
 	{
 		count += _putfd(*str++, fd);
 	}
 
-	return count
+	return (count);
 }
