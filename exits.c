@@ -1,3 +1,4 @@
+#include <stddef.h>
 /**
  * _strncpy - copies a string
  * @destination: the destination string to be copied to
@@ -54,7 +55,7 @@ char *_strchr(const char *str, int character)
 	while (*str != '\0')
 	{
 		if (*str == character)
-			return ((char *)str);
+			return (char *)str;
 		str++;
 	}
 

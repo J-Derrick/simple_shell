@@ -8,43 +8,28 @@
  */
 int interactive(info_t *info)
 {
-	int is_interactive = 0;
-
-	if (isatty(STDIN_FILENO) && info->readfd <= 2)
-		is_interactive = 1;
-
-	return (is_interactive);
+	return (isatty(STDIN_FILENO) && info->readfd <= 2);
 }
 
 /**
  * is_delim - checks if character is a delimiter
- * @c: the character to check
+ * @c: the char to check
  * @delim: the delimiter string
- *
  * Return: 1 if true, 0 if false
  */
 int is_delim(char c, char *delim)
 {
-	int is_delimiter = 0;
-
-	while (*delim != '\0')
+	while (*delim)
 	{
-		if (*delim == c)
-		{
-			is_delimiter = 1;
-			break;
-		}
-
-		delim++;
+		if (*delim++ == c)
+			return (1);
 	}
-
-	return (is_delimiter);
+	return (0);
 }
 
 /**
  * _isalpha - checks for alphabetic character
  * @c: The character to check
- *
  * Return: 1 if c is alphabetic, 0 otherwise
  */
 int _isalpha(int c)
@@ -58,17 +43,14 @@ int _isalpha(int c)
 /**
  * _atoi - converts a string to an integer
  * @s: the string to be converted
- *
  * Return: 0 if no numbers in string, converted number otherwise
  */
 int _atoi(char *s)
 {
-	int i = 0;
-	int sign = 1;
-	int flag = 0;
+	int i, sign = 1, flag = 0, output;
 	unsigned int result = 0;
 
-	while (s[i] != '\0' && flag != 2)
+	for (i = 0; s[i] != '\0' && flag != 2; i++)
 	{
 		if (s[i] == '-')
 			sign *= -1;
@@ -81,10 +63,13 @@ int _atoi(char *s)
 		}
 		else if (flag == 1)
 			flag = 2;
-
-		i++;
 	}
-	int output = (sign == -1) ? -result : result;
+
+	if (sign == -1)
+		output = -result;
+	else
+		output = result;
 
 	return (output);
 }
+

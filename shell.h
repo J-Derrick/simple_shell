@@ -36,7 +36,6 @@
 
 extern char **environ;
 
-
 /**
  * struct liststr - singly linked list
  * @num: the number field
@@ -54,7 +53,7 @@ typedef struct liststr
  * struct passinfo - contains pseudo-arguements to pass into a function,
  * allowing uniform prototype for function pointer struct
  * @arg: a string generated from getline containing arguements
- * @argv:an array of strings generated from arg
+ * @argv: an array of strings generated from arg
  * @path: a string path for the current command
  * @argc: the argument count
  * @line_count: the error count
@@ -110,7 +109,6 @@ typedef struct builtin
 	int (*func)(info_t *);
 } builtin_table;
 
-
 /* toem_shloop.c */
 int hsh(info_t *, char **);
 int find_builtin(info_t *);
@@ -146,7 +144,7 @@ int _putchar(char);
 /* toem_exits.c */
 char *_strncpy(char *, char *, int);
 char *_strncat(char *, char *, int);
-char *_strchr(char *, char);
+char *_strchr(char *, int);
 
 /* toem_tokenizer.c */
 char **strtow(char *, char *);
@@ -164,7 +162,7 @@ int bfree(void **);
 int interactive(info_t *);
 int is_delim(char, char *);
 int _isalpha(int);
-int _atoi(char *);
+int _atoi(const char *);
 
 /* toem_errors1.c */
 int _erratoi(char *);
@@ -182,7 +180,7 @@ int _myhelp(info_t *);
 int _myhistory(info_t *);
 int _myalias(info_t *);
 
-/*toem_getline.c */
+/* toem_getline.c */
 ssize_t get_input(info_t *);
 int _getline(info_t *, char **, size_t *);
 void sigintHandler(int);
@@ -205,11 +203,11 @@ int _unsetenv(info_t *, char *);
 int _setenv(info_t *, char *, char *);
 
 /* toem_history.c */
-char *get_history_file(info_t *info);
-int write_history(info_t *info);
-int read_history(info_t *info);
-int build_history_list(info_t *info, char *buf, int linecount);
-int renumber_history(info_t *info);
+char *get_history_file(info_t *);
+int write_history(info_t *);
+int read_history(info_t *);
+int build_history_list(info_t *, char *, int);
+int renumber_history(info_t *);
 
 /* toem_lists.c */
 list_t *add_node(list_t **, const char *, int);
@@ -232,5 +230,5 @@ int replace_alias(info_t *);
 int replace_vars(info_t *);
 int replace_string(char **, char *);
 
-#endif
+#endif /* _SHELL_H_ */
 
