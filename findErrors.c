@@ -8,83 +8,78 @@
  */
 void _eputs(char *str)
 {
-	for (int i = 0; str[i] != '\0'; i++)
+	int i = 0;
+
+	if (!str)
+		return;
+	while (str[i] != '\0')
 	{
 		_eputchar(str[i]);
+		i++;
 	}
-
 }
 
 /**
- * _eputchar - writes the character c to standard error
+ * _eputchar - writes the character c to stderr
  * @c: The character to print
  *
  * Return: On success 1.
- *         On error, -1 is returned, and errno is set appropriately.
+ * On error, -1 is returned, and errno is set appropriately.
  */
 int _eputchar(char c)
 {
-	static char buf[WRITE_BUF_SIZE];
 	static int i;
+	static char buf[WRITE_BUF_SIZE];
 
-	if (c != BUF_FLUSH)
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
 	{
-		buf[i++] = c;
-		if (i >= WRITE_BUF_SIZE || c == BUF_FLUSH)
-		{
-			for (int j = 0; j < i; j++)
-			{
-				write(2, &buf[j], 1);
-			}
-			i = 0;
-		}
+		write(2, buf, i);
+		i = 0;
 	}
+	if (c != BUF_FLUSH)
+		buf[i++] = c;
 	return (1);
 }
 
 /**
  * _putfd - writes the character c to given fd
  * @c: The character to print
- * @fd: The file descriptor to write to
+ * @fd: The filedescriptor to write to
  *
  * Return: On success 1.
- *         On error, -1 is returned, and errno is set appropriately.
+ * On error, -1 is returned, and errno is set appropriately.
  */
 int _putfd(char c, int fd)
 {
-	static int index;
-	static char buffer[WRITE_BUF_SIZE];
+	static int i;
+	static char buf[WRITE_BUF_SIZE];
 
-	if (c == BUF_FLUSH || index >= WRITE_BUF_SIZE)
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
 	{
-		write(fd, buffer, index);
-		index = 0;
+		write(fd, buf, i);
+		i = 0;
 	}
-
 	if (c != BUF_FLUSH)
-		buffer[index++] = c;
-
+		buf[i++] = c;
 	return (1);
 }
 
 /**
  * _putsfd - prints an input string
- * @str: The string to be printed
- * @fd: The file descriptor to write to
+ * @str: the string to be printed
+ * @fd: the filedescriptor to write to
  *
- * Return: The number of characters put
+ * Return: the number of chars put
  */
 int _putsfd(char *str, int fd)
 {
-	int count = 0;
+	int i = 0;
 
 	if (!str)
 		return (0);
-
 	while (*str)
 	{
-		count += _putfd(*str++, fd);
+		i += _putfd(*str++, fd);
 	}
-
-	return (count);
+	return (i);
 }

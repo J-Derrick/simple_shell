@@ -1,57 +1,37 @@
 #include "shell.h"
 
 /**
- * get_environ - returns the string array copy of our environ
+ * _myenv - prints the current environment
  * @info: Structure containing potential arguments. Used to maintain
  *          constant function prototype.
- * Return: The string array copy of our environ
+ * Return: Always 0
  */
-char **get_environ(info_t *info)
+int _myenv(info_t *info)
 {
-	if (!info->environ || info->env_changed)
-	{
-		if (info->environ)
-			free_string_array(info->environ);
-		info->environ = list_to_strings(info->env);
-		info->env_changed = 0;
-	}
-
-	return (info->environ);
+	print_list_str(info->env);
+	return (0);
 }
 
 /**
- * _myunsetenv - Remove an environment variable
+ * _getenv - gets the value of an environ variable
  * @info: Structure containing potential arguments. Used to maintain
- *        constant function prototype.
- * @var: the string env var property
- * Return: 1 on successful delete, 0 otherwise
+ * @name: env var name
+ *
+ * Return: the value
  */
-int _myunsetenv(info_t *info, const char *var)
+char *_getenv(info_t *info, const char *name)
 {
 	list_t *node = info->env;
-	size_t i = 0;
 	char *p;
-
-	if (!node || !var)
-		return (0);
 
 	while (node)
 	{
-		p = starts_with(node->str, var);
-		if (p && *p == '=')
-		{
-			info->env_changed = delete_node_at_index(&(info->env), i);
-			i = 0;
-			node = info->env;
-		}
-		else
-		{
-			node = node->next;
-			i++;
-		}
+		p = starts_with(node->str, name);
+		if (p && *p)
+			return (p);
+		node = node->next;
 	}
-
-	return (info->env_changed);
+	return (NULL);
 }
 
 /**
@@ -59,41 +39,55 @@ int _myunsetenv(info_t *info, const char *var)
  *             or modify an existing one
  * @info: Structure containing potential arguments. Used to maintain
  *        constant function prototype.
- * @var: the string env var property
- * @value: the string env var value
+ *  Return: Always 0
+ */
+int _mysetenv(info_t *info)
+{
+	if (info->argc != 3)
+	{
+		_eputs("Incorrect number of arguements\n");
+		return (1);
+	}
+	if (_setenv(info, info->argv[1], info->argv[2]))
+		return (0);
+	return (1);
+}
+
+/**
+ * _myunsetenv - Remove an environment variable
+ * @info: Structure containing potential arguments. Used to maintain
+ *        constant function prototype.
  * Return: Always 0
  */
-int _mysetenv(info_t *info, const char *var, const char *value)
+int _myunsetenv(info_t *info)
 {
-	char *buf = NULL;
-	list_t *node;
-	char *p;
+	int i;
 
-	if (!var || !value)
-		return (0);
-
-	buf = malloc(_strlen(var) + _strlen(value) + 2);
-	if (!buf)
-		return (1);
-	_strcpy(buf, var);
-	_strcat(buf, "=");
-	_strcat(buf, value);
-	node = info->env;
-	while (node)
+	if (info->argc == 1)
 	{
-		p = starts_with(node->str, var);
-		if (p && *p == '=')
-		{
-			free(node->str);
-			node->str = buf;
-			info->env_changed = 1;
-			return (0);
-		}
-		node = node->next;
+		_eputs("Too few arguements.\n");
+		return (1);
 	}
-	add_node_end(&(info->env), buf, 0);
-	free(buf);
-	info->env_changed = 1;
+	for (i = 1; i <= info->argc; i++)
+		_unsetenv(info, info->argv[i]);
+
+	return (0);
+}
+
+/**
+ * populate_env_list - populates env linked list
+ * @info: Structure containing potential arguments. Used to maintain
+ *          constant function prototype.
+ * Return: Always 0
+ */
+int populate_env_list(info_t *info)
+{
+	list_t *node = NULL;
+	size_t i;
+
+	for (i = 0; environ[i]; i++)
+		add_node_end(&node, environ[i], 0);
+	info->env = node;
 	return (0);
 }
 

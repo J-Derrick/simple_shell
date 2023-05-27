@@ -45,6 +45,7 @@ void print_error(info_t *info, char *estr)
 	_eputs(": ");
 	_eputs(estr);
 }
+
 /**
  * print_d - function prints a decimal (integer) number (base 10)
  * @input: the input
@@ -55,28 +56,31 @@ void print_error(info_t *info, char *estr)
 int print_d(int input, int fd)
 {
 	int (*__putchar)(char) = _putchar;
-	int count = 0;
+	int i, count = 0;
 	unsigned int _abs_, current;
 
 	if (fd == STDERR_FILENO)
 		__putchar = _eputchar;
-
-	_abs_ = (input < 0) ? -input : input;
-	current = _abs_;
-
 	if (input < 0)
 	{
+		_abs_ = -input;
 		__putchar('-');
 		count++;
 	}
-
-	for (int i = 1000000000; i > 0; i /= 10)
+	else
+		_abs_ = input;
+	current = _abs_;
+	for (i = 1000000000; i > 1; i /= 10)
 	{
-		unsigned int digit = (current / i) % 10;
-
-		__putchar('0' + digit);
-		count++;
+		if (_abs_ / i)
+		{
+			__putchar('0' + current / i);
+			count++;
+		}
+		current %= i;
 	}
+	__putchar('0' + current);
+	count++;
 
 	return (count);
 }
@@ -91,25 +95,32 @@ int print_d(int input, int fd)
  */
 char *convert_number(long int num, int base, int flags)
 {
-	static char *array = "0123456789ABCDEF";
+	static char *array;
 	static char buffer[50];
-	char sign = (num < 0 && !(flags & CONVERT_UNSIGNED)) ? '-' : '\0';
-	char *ptr = &buffer[49];
-	unsigned long n = (num < 0 && !(flags & CONVERT_UNSIGNED)) ? -num : num;
+	char sign = 0;
+	char *ptr;
+	unsigned long n = num;
 
+	if (!(flags & CONVERT_UNSIGNED) && num < 0)
+	{
+		n = -num;
+		sign = '-';
+
+	}
+	array = flags & CONVERT_LOWERCASE ? "0123456789abcdef" : "0123456789ABCDEF";
+	ptr = &buffer[49];
 	*ptr = '\0';
 
-	do {
-		unsigned int digit = n % base;
-		*--ptr = array[digit];
+	do	{
+		*--ptr = array[n % base];
 		n /= base;
 	} while (n != 0);
 
 	if (sign)
 		*--ptr = sign;
-
 	return (ptr);
 }
+
 /**
  * remove_comments - function replaces first instance of '#' with '\0'
  * @buf: address of the string to modify
